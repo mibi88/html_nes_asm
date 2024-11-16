@@ -1,0 +1,16 @@
+                            HTML NES ASM
+                              by Mibi88
+
+A small JS assembler for the NES that I quickly wrote to code NES games on my
+phone without needing Termux so the code is atrocious.
+
+It currently generates NROM 128 roms.
+
+    TODO
+
+[ ] Make the code cleaner
+[ ] Add an incbin directive
+[ ] Support binary and decimal numbers
+[ ] Proper segments (you can only put labels in the STARTUP segment)
+[ ] Support simple defines
+[ ] Code a proper linker
