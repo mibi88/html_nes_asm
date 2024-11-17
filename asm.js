@@ -401,11 +401,12 @@ function updateAddressingModes(code) {
     return code;
 }
 
-function getLabelAddresses(code) {
+async function getLabelAddresses(code) {
     var segment = "";
     var pos = 0x8000;
     var labels = [];
     var i;
+    includedFiles = [];
     for(i=0;i<code.length;i++){
         v = code[i];
         console.log("item");
@@ -420,6 +421,45 @@ function getLabelAddresses(code) {
             }
             if(v.name == "byte" && v.args.length == 1 && segment == "STARTUP"){
                 pos++;
+            }else if(v.name == "incbin" && v.args.length == 1){
+                if(segment == "STARTUP"){
+                    alert("Please select \"" + v.args[0].toString() + "\"");
+                    console.log("Please select \"" +
+                        v.args[0].toString() + "\"");
+                    var input = document.createElement('input');
+                    input.type = 'file';
+                    input.click();
+                    await eventPromise(input, "change");
+                    console.log("file selected!");
+                    var fileData;
+                    await new Promise(function(resolve, reject) {
+                        if(!input.files.length){
+                            output.textContent += v.line.toString() +
+                                ": Not enough files selected, skipping!\n";
+                            reject();
+                        }
+                        var fileReader = new FileReader();
+                        fileReader.onload = function(e) {
+                            fileData = Array.from(
+                                    new Uint8Array(e.target.result));
+                            resolve();
+                        }
+                        fileReader.onerror = function() {
+                            output.textContent += v.line.toString() +
+                                ": Failed to load file, skipping!\n";
+                            reject();
+                        }
+                        fileReader.readAsArrayBuffer(input.files[0]);
+                    });
+                    console.log("file recieved!");
+                    console.log(fileData);
+                    includedFiles.push({name: v.args[0].toString(),
+                        data: fileData});
+                    pos += fileData.length;
+                }else{
+                    output.textContent += v.line.toString() +
+                        ": Invalid segment, skipping!\n";
+                }
             }
         }else if(v.type == "instruction"){
             if(segment == "STARTUP"){
@@ -471,6 +511,16 @@ function parseValue(v) {
     return undefined;
 }
 
+async function eventPromise(item, event) {
+    return new Promise(function(resolve) {
+        const listener = function() {
+            item.removeEventListener(event, listener);
+          resolve();
+        }
+        item.addEventListener(event, listener);
+    });
+}
+
 function assemble(code) {
     var i;
     var segment = "";
@@ -484,8 +534,7 @@ function assemble(code) {
                 console.log("found segment");
                 console.log(v.args[0]);
                 segment = v.args[0];
-            }
-            if(v.name == "byte" && v.args.length == 1){
+            }else if(v.name == "byte" && v.args.length == 1){
                 var num = parseInt(v.args[0], 16);
                 if(num != NaN){
                     switch(segment){
@@ -505,6 +554,20 @@ function assemble(code) {
                             output.textContent += v.line.toString() +
                                 ": Invalid segment, skipping!\n";
                     }
+                }
+            }else if(v.name == "incbin" && v.args.length == 1){
+                var found = false;
+                for(n=0;n<includedFiles.length;n++){
+                    if(includedFiles[n].name == v.args[0]){
+                        startup = startup.concat(includedFiles[n].data);
+                        codePos += includedFiles[n].data.length;
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found){
+                    output.textContent += v.line.toString() +
+                        ": File not found, skipping!\n";
                 }
             }
         }else if(v.type == "instruction"){
@@ -625,6 +688,7 @@ function assemble(code) {
             }
         }
     }
+    return;
 }
 
 function updateValues(code) {
@@ -682,7 +746,7 @@ function generateRom() {
             var asmData = e.target.result;
             var reader = new FileReader();
             
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 var chrData = Array.from(new Uint8Array(e.target.result));
                 console.log(chrData);
                 console.log(e.target.result);
@@ -719,7 +783,7 @@ function generateRom() {
                 instructions = updateAddressingModes(instructions);
                 console.log(instructions);
                 console.log(instructions.length);
-                labels = getLabelAddresses(instructions);
+                labels = await getLabelAddresses(instructions);
                 console.log(labels);
                 instructions = updateValues(instructions);
                 console.log(instructions);

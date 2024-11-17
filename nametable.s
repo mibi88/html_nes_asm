@@ -88,6 +88,9 @@ RESET_LOADPALETTE:
 RESET_GAMELOOP:
     JMP RESET_GAMELOOP
 
+NAM1:
+    .incbin nametable.nam
+
 NMI:
     ; Save the registers
     PHA
@@ -97,8 +100,26 @@ NMI:
     PHA
     ; Read PPUSTATUS
     BIT 2002
+    ; Copy the sprites
     LDA #02
     STA 4014
+    ; Load the palette
+    LDX #00
+    STX 2000
+    STX 2001
+    LDA #3F
+    STA 2006
+    STX 2006
+NMI_LOADPALETTE:
+    LDA PALETTE, X
+    STA 2007
+    INX
+    CPX #20
+    BNE NMI_LOADPALETTE
+    LDA #80
+    STA 2000
+    LDA #10
+    STA 2001
     ; Restore registers
     PLA
     TAY
