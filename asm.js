@@ -515,7 +515,7 @@ async function eventPromise(item, event) {
     return new Promise(function(resolve) {
         const listener = function() {
             item.removeEventListener(event, listener);
-          resolve();
+            resolve();
         }
         item.addEventListener(event, listener);
     });
@@ -727,6 +727,7 @@ function updateValues(code) {
 function generateRom() {
     var asm = document.getElementById("asm");
     var chr = document.getElementById("chr");
+    var outputFile = document.getElementById("output_file");
     data = [];
     header = [];
     startup = [];
@@ -836,7 +837,7 @@ function generateRom() {
                 console.log(data);
                 output.textContent += "Code linked successfully!\n";
                 console.log("Code linked successfully!");
-                download(new Uint8Array(data), "rom.nes",
+                download(new Uint8Array(data), outputFile.value,
                     "application/x-nes-rom");
             };
             reader.readAsArrayBuffer(chr.files[0]);

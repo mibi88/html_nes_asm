@@ -25,12 +25,9 @@
 .byte 21 ; 20 for bus conflicts and 1 for multiple TV systems
 
 .segment ZEROPAGE
-.res zp1 2
-.res zp2 1
+.res ptr 2
 
 .segment BSS
-.res bss1 64 ; 100 in hex
-.res bss2 F
 
 .segment STARTUP
 RESET:
@@ -74,9 +71,18 @@ RESET_LOADPALETTE:
     INX
     CPX #20
     BNE RESET_LOADPALETTE
+    ; Load the nametable
+    LDA #<NAM1 ; Get the low byte
+    STA ptr
+    LDA #>NAM1 ; Get the high byte
+    STA ptr+1
+    STX 2006
+    LDA #00
+    STA 2006
+    JSR LOADNAM
     LDA #80
     STA 2000
-    LDA #10
+    LDA #18
     STA 2001
     ; Add a sprite
     LDA #10
@@ -90,6 +96,21 @@ RESET_GAMELOOP:
 
 NAM1:
     .incbin nametable.nam
+
+LOADNAM:
+    LDX #00
+LOADNAM_XLOOP:
+    LDY #00
+LOADNAM_YLOOP:
+    LDA (ptr), Y
+    STA 2007
+    INY
+    BNE LOADNAM_YLOOP
+    INC ptr+1
+    INX
+    CPX #04
+    BNE LOADNAM_XLOOP
+    RTS
 
 NMI:
     ; Save the registers
@@ -118,8 +139,11 @@ NMI_LOADPALETTE:
     BNE NMI_LOADPALETTE
     LDA #80
     STA 2000
-    LDA #10
+    LDA #18
     STA 2001
+    LDA #$00
+    STA 2005
+    STA 2005
     ; Restore registers
     PLA
     TAY

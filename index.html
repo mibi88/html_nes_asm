@@ -36,6 +36,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <body>
         <form onsubmit="generateRom(); return false;" method="post">
             <div class="element">
+                <label for="output">Output file name: </label>
+                <input type="entry" name="output_file" id="output_file"
+                    value="rom.nes"></input>
+            </div>
+            <div class="element">
                 <label for="asm">Source code: </label>
                 <input type="file" name="asm" id="asm"></input>
             </div>
