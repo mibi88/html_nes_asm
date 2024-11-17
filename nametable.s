@@ -141,7 +141,7 @@ NMI_LOADPALETTE:
     STA 2000
     LDA #18
     STA 2001
-    LDA #$00
+    LDA #00
     STA 2005
     STA 2005
     ; Restore registers

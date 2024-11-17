@@ -6,6 +6,12 @@ phone without needing Termux so the code is atrocious.
 
 It currently generates NROM 128 roms.
 
+    USAGE
+
+Open index.html or index_base64.html if index.html is not working properly.
+
+Select the files and press 
+
     TODO
 
 [ ] Make the code cleaner

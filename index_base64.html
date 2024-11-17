@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <link rel="stylesheet" type="text/css" href="index.css">
     </head>
     <body>
-        <form onsubmit="generateRom(); return false;" method="post">
+        <div>
             <div class="element">
                 <label for="output">Output file name: </label>
                 <input type="entry" name="output_file" id="output_file"
@@ -49,13 +49,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <input type="file" name="chr" id="chr"></input>
             </div>
             <div class="element">
-                <input type="submit" value="Assemble"></input>
+                <button onclick="generateRom();">Assemble</button>
             </div>
-        </form>
+        </div>
         <p>Output:</p>
         <p id="output"></p>
     </body>
-    <script src="download.js"></script>
+    <script src="download_base64.js"></script>
     <script src="cpu.js"></script>
     <script src="asm.js"></script>
 </html>
