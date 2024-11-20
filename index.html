@@ -34,6 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <link rel="stylesheet" type="text/css" href="index.css">
     </head>
     <body>
+        <h1>JS NES assembler</h1>
+        <p>A small assembler to compile NES games directly in the browser.</p>
+        <p>
+            Currently it only supports linking to NROM 128. It also has some
+            major differences with some more advanced assemblers: Numbers can
+            only be in hex, so you shouldn't put a '$' in front of them. I plan
+            to change that in the future, it's in a very early state.
+        </p>
         <form onsubmit="generateRom(); return false;" method="post">
             <div class="element">
                 <label for="output">Output file name: </label>
