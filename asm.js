@@ -597,14 +597,17 @@ function assemble(code) {
                                         ": Invalid value, skipping!\n";
                                 }else{
                                     var l = parseInt(v.v1, 16);
-                                    var d = l-codePos-opSize[v.addressingMode];
+                                    var d = l-codePos-2;
+                                    console.log("branch");
+                                    console.log(v.v1);
+                                    console.log(codePos);
                                     console.log(d);
                                     if(d < -128 || d > 127){
                                         output.textContent +=
                                             v.line.toString() +
                                             ": Branching too far!\n";
                                     }else{
-                                        d = (256+d)%255;
+                                        d = (256+d)%256;
                                         startup.push(d);
                                     }
                                 }
